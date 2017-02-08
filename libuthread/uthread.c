@@ -24,6 +24,10 @@ struct uthread_tcb {
 void uthread_yield(void)
 {
 	/* TODO Phase 2 */
+	uthread_tcb* top, next;
+	queue_dequeue(threadQ, top);
+	if (queue_dequeue(threadQ, next) == -1) exit(0);
+	else uthread_ctx_switch(top-context, next->context);
 }
 
 int uthread_create(uthread_func_t func, void *arg)
@@ -33,7 +37,7 @@ int uthread_create(uthread_func_t func, void *arg)
 	thread->stack = uthread_ctx_alloc_stack();
 	uthread_ctx_init(thread->context, thread->stack, func, arg);
 
-	threadQ.enqueue(thread);
+	queue_enqueue(threadQ, thread);
 }
 
 void uthread_exit(void)
@@ -62,12 +66,12 @@ void uthread_start(uthread_func_t start, void *arg)
 	threadQ = queue_create(); // queue of tcb
 
 	uthread_tcb* idle = malloc(sizeof(uthread_tcb); // create idle thread
-	threadQ.enqueue(idle); // add idle thread
+	thread_enqueue(threadQ, idle); // add idle thread
 
 	uthread_create(start, arg); // add first thread
 
 	// infinite loop
 	while(1) {
-
+		uthread_yield();
 	}
 }
