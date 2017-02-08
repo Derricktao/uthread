@@ -17,3 +17,6 @@ semaphore.o:
 
 uthread.o:
 	gcc -c uthread.c
+
+clean:
+	rm -f libuthread.a *.o
