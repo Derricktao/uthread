@@ -24,20 +24,20 @@ struct uthread_tcb {
 void uthread_yield(void)
 {
 	/* TODO Phase 2 */
-	uthread_tcb* top, next;
-	queue_dequeue(threadQ, top);
-	if (queue_dequeue(threadQ, next) == -1) exit(0);
-	else uthread_ctx_switch(top-context, next->context);
+	uthread_tcb* top, next; // holders for tcb at top and next
+	queue_dequeue(threadQ, top); // dequeue top
+	if (queue_dequeue(threadQ, next) == -1) exit(0); // try to dequeue; if empty, exit
+	else uthread_ctx_switch(top-context, next->context); // else context switch
 }
 
 int uthread_create(uthread_func_t func, void *arg)
 {
 	/* TODO Phase 2 */
-	uthread_tcb* thread = malloc(sizeof(uthread_tcb);
-	thread->stack = uthread_ctx_alloc_stack();
-	uthread_ctx_init(thread->context, thread->stack, func, arg);
+	uthread_tcb* thread = malloc(sizeof(uthread_tcb); // allocate new tcb
+	thread->stack = uthread_ctx_alloc_stack(); // call stack allocator, from context.c/.h
+	uthread_ctx_init(thread->context, thread->stack, func, arg); // init context from ^
 
-	queue_enqueue(threadQ, thread);
+	queue_enqueue(threadQ, thread); // add tcb to queue
 }
 
 void uthread_exit(void)
@@ -72,6 +72,6 @@ void uthread_start(uthread_func_t start, void *arg)
 
 	// infinite loop
 	while(1) {
-		uthread_yield();
+		uthread_yield(); // yield to next thread
 	}
 }
