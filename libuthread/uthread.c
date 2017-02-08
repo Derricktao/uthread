@@ -12,8 +12,13 @@
 #include "queue.h"
 #include "uthread.h"
 
+queue_t threadQ;
+
 struct uthread_tcb {
 	/* TODO Phase 2 */
+	int status;
+	uthread_ctx_t context;
+	void *stack;
 };
 
 void uthread_yield(void)
@@ -24,6 +29,11 @@ void uthread_yield(void)
 int uthread_create(uthread_func_t func, void *arg)
 {
 	/* TODO Phase 2 */
+	uthread_tcb* thread = malloc(sizeof(uthread_tcb);
+	thread->stack = uthread_ctx_alloc_stack();
+	uthread_ctx_init(thread->context, thread->stack, func, arg);
+
+	threadQ.enqueue(thread);
 }
 
 void uthread_exit(void)
@@ -49,4 +59,15 @@ struct uthread_tcb *uthread_current(void)
 void uthread_start(uthread_func_t start, void *arg)
 {
 	/* TODO Phase 2 */
+	threadQ = queue_create(); // queue of tcb
+
+	uthread_tcb* idle = malloc(sizeof(uthread_tcb); // create idle thread
+	threadQ.enqueue(idle); // add idle thread
+
+	uthread_create(start, arg); // add first thread
+
+	// infinite loop
+	while(1) {
+
+	}
 }
