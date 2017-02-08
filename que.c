@@ -34,14 +34,22 @@ queue_t queue_create(void)
 	return qt;
 }
 
-int queue_destroy(queue_t queue)
+int queue_destroy(queue_t queue)		// done
 {
+	if(!queue){
+		return -1;
+	}
+	
 	free(queue);
 	return 0;
 }
 
-int queue_enqueue(queue_t queue, void *data)
+int queue_enqueue(queue_t queue, void *data)	//done
 {
+	if(!queue){
+		return -1;
+	}
+	
 		Node* cur = queue->head; 
 		Node* head = queue->head; 
 		Node* temp = head; 
@@ -79,9 +87,10 @@ int queue_enqueue(queue_t queue, void *data)
 
 int queue_dequeue(queue_t queue, void **data)  // done, check if works with one element
 {
-	if(queue->len==0){
+	if(!queue || queue->len==0 ){
 		return -1;
 	}
+	
 	Node* head = queue->head; 
 	Node* del = head;
 	
@@ -99,6 +108,10 @@ int queue_dequeue(queue_t queue, void **data)  // done, check if works with one 
 
 int queue_delete(queue_t queue, void *data)			// done
 {
+	if(!queue ){
+		return -1;
+	}
+	
 	Node* cur = queue->head; 
 	Node* head = queue->head; 
 	Node* del ; 
@@ -154,6 +167,10 @@ int queue_delete(queue_t queue, void *data)			// done
 
 int queue_iterate(queue_t queue, queue_func_t func)  // done until needs modification
 {
+	if(!queue ){
+		return -1;
+	}
+	
 	Node* cur = queue->head; 
 	Node* head = queue->head; 
 	Node* temp ; 
@@ -176,6 +193,10 @@ int queue_iterate(queue_t queue, queue_func_t func)  // done until needs modific
 
 int queue_length(queue_t queue)
 {
+	
+	if(!queue){
+		return -1;
+	}
 	return queue->len;
 }
 
