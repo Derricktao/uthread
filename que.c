@@ -1,7 +1,10 @@
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
+ #include <assert.h>
 
-
+ // if queue NULL return -1
+ 
 typedef struct Node {
 	struct Node* prev;
 	struct Node* next;
@@ -16,12 +19,13 @@ typedef struct queue {
 	int len;
 } *queue_t;
 
+typedef void (*queue_func_t)(void *data);
 
 // Apart from delete and iterate operations, all operations should be O(1).
 
 queue_t queue_create(void)
 {
-	queue_t qt;
+	queue_t qt = malloc(sizeof(queue_t));
 	
 	qt->head = NULL;
 	qt->tail = NULL;
@@ -49,7 +53,7 @@ int queue_enqueue(queue_t queue, void *data)
 			queue->head=cur;
 		}		
 		else{
-			cur = tail;
+			cur = queue->tail;
 			
 			Node* new = malloc(sizeof(Node));
 			 
@@ -66,7 +70,8 @@ int queue_enqueue(queue_t queue, void *data)
 			
 		}
 		
-		len++;
+		queue->len++;
+		return 0;
 }
 
 int queue_dequeue(queue_t queue, void **data)
@@ -77,11 +82,12 @@ int queue_dequeue(queue_t queue, void **data)
 	
 	data = &head->value;
 	
-	head = head->next;
+	queue->head = head->next;
 	
-	head->prev = NULL;
+	queue->head->prev = NULL;
 	
-	len--;
+	queue->len--;
+	return 0;
 }
 
 int queue_delete(queue_t queue, void *data)
@@ -94,41 +100,93 @@ int queue_delete(queue_t queue, void *data)
 			//return error?
 		}
 		else{
+				//check if at end/beg of list
 			
+
 			 while(cur != NULL){				 
 				 if(cur->value == data){			// find where value == data 
+					//printf("\n");
+					//printf("we have a match\n");
+					//printf("%d\n", *(int*)(cur->value));
 					 break;
 				 }				
 				cur = cur->next;
 			 }		
 			 
-			 temp = cur->prev 
+			 cur->prev->next = cur->next;
 			 
-			 cur = cur->next;
+
 			 
-			 cur->prev = temp;
+			 cur->next->prev = cur->prev;
 			 
 			 
 			 
 		}
 		
-		
+	return 0;
 }
 
 int queue_iterate(queue_t queue, queue_func_t func)
 {
+	Node* cur = queue->head; 
+	Node* head = queue->head; 
+	Node* temp ; 
 	
+	return 0;
 }
 
 int queue_length(queue_t queue)
 {
-	return len;
+	return queue->len;
 }
 
+void queue_print(queue_t queue){
+	Node* cur = queue->head; 
+	
+	printf("\n");
+	 
+	 while(cur != NULL){
+		 
+		printf("%d\n", *(int*)(cur->value));
+		
+		cur = cur->next;
+
+	 }
+}
 
 int main()
 {
+
+	queue_t queue;
 	
+	queue = queue_create();
+	
+	int a = 1;
+	int b = 2;
+	int c = 3;
+	int d = 4;
+	
+	void **e;
+	
+	queue_enqueue(queue,&a);
+	queue_enqueue(queue,&b);
+	queue_enqueue(queue,&c);
+	queue_enqueue(queue,&d);
+	
+	queue_print(queue);
+	printf("\n");
+	
+	
+	queue_dequeue(queue,e);
+	
+	
+	queue_print(queue);
+	
+	queue_delete(queue,&c);
+	
+	queue_print(queue);
+	
+	//assert(queue_destroy(NULL) == -1);
 	
 	return 0;
 }
