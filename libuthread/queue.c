@@ -94,7 +94,7 @@ int queue_dequeue(queue_t queue, void **data)  // done, check if works with one 
 	Node* head = queue->head; 
 	Node* del = head;
 	
-	data = &head->value;
+	data = &(head->value);
 	
 	queue->head = head->next;
 	
@@ -153,7 +153,7 @@ int queue_delete(queue_t queue, void *data)			// done
 		queue->tail = queue->tail->prev;
 		queue->tail->next = NULL;
 	}
-	else if{									// value == data, in mid 
+	else {									// value == data, in mid 
 	
 		del = cur; 
 		
@@ -214,7 +214,7 @@ void queue_print(queue_t queue){
 	 }
 }
 
-int main()
+/*int main()
 {
 
 	queue_t queue;
@@ -249,4 +249,4 @@ int main()
 	//assert(queue_destroy(NULL) == -1);
 	
 	return 0;
-}
+}*/
