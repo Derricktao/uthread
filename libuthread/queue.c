@@ -1,11 +1,8 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
-#include <setjmp.h>
 
-// how to check for errors?
- 
+#include "queue.h"
+
 typedef struct Node {
 	struct Node* prev;
 	struct Node* next;
@@ -13,19 +10,16 @@ typedef struct Node {
 
 } Node;
 
-typedef struct queue {
-	
+struct queue {
+	/* TODO Phase 1 */
 	Node* head;
 	Node* tail;
 	int len;
-} *queue_t;
-
-typedef void (*queue_func_t)(void *data);
-
-// Apart from delete and iterate operations, all operations should be O(1).
+};
 
 queue_t queue_create(void)
 {
+	/* TODO Phase 1 */
 	queue_t qt = malloc(sizeof(queue_t));
 	
 	qt->head = NULL;
@@ -34,8 +28,9 @@ queue_t queue_create(void)
 	return qt;
 }
 
-int queue_destroy(queue_t queue)		// done
+int queue_destroy(queue_t queue)
 {
+	/* TODO Phase 1 */
 	if(!queue){
 		return -1;
 	}
@@ -44,8 +39,9 @@ int queue_destroy(queue_t queue)		// done
 	return 0;
 }
 
-int queue_enqueue(queue_t queue, void *data)	//done
+int queue_enqueue(queue_t queue, void *data)
 {
+	/* TODO Phase 1 */
 	if(!queue){
 		return -1;
 	}
@@ -82,11 +78,12 @@ int queue_enqueue(queue_t queue, void *data)	//done
 		}
 		
 		queue->len++;
-		return 0;
+	return 0;
 }
 
-int queue_dequeue(queue_t queue, void **data)  // done, check if works with one element
+int queue_dequeue(queue_t queue, void **data)
 {
+	/* TODO Phase 1 */
 	if(!queue || queue->len==0 ){
 		return -1;
 	}
@@ -106,8 +103,9 @@ int queue_dequeue(queue_t queue, void **data)  // done, check if works with one 
 	return 0;
 }
 
-int queue_delete(queue_t queue, void *data)			// done
+int queue_delete(queue_t queue, void *data)
 {
+	/* TODO Phase 1 */
 	if(!queue ){
 		return -1;
 	}
@@ -165,8 +163,9 @@ int queue_delete(queue_t queue, void *data)			// done
 	return 0;
 }
 
-int queue_iterate(queue_t queue, queue_func_t func)  // done until needs modification
+int queue_iterate(queue_t queue, queue_func_t func)
 {
+	/* TODO Phase 1 */
 	if(!queue ){
 		return -1;
 	}
@@ -193,60 +192,9 @@ int queue_iterate(queue_t queue, queue_func_t func)  // done until needs modific
 
 int queue_length(queue_t queue)
 {
-	
+	/* TODO Phase 1 */
 	if(!queue){
 		return -1;
 	}
 	return queue->len;
 }
-
-void queue_print(queue_t queue){
-	Node* cur = queue->head; 
-	
-	printf("\n");
-	 
-	 while(cur != NULL){
-		 
-		printf("%d\n", *(int*)(cur->value));
-		
-		cur = cur->next;
-
-	 }
-}
-
-/*int main()
-{
-
-	queue_t queue;
-	
-	queue = queue_create();
-	
-	int a = 1;
-	int b = 2;
-	int c = 3;
-	int d = 4;
-	
-	void **e;
-	
-	queue_enqueue(queue,&a);
-	queue_enqueue(queue,&b);
-	queue_enqueue(queue,&c);
-	queue_enqueue(queue,&d);
-	
-	queue_print(queue);
-	printf("\n");
-	
-	
-	queue_dequeue(queue,e);
-	
-	
-	queue_print(queue);
-	
-	queue_delete(queue,&b);
-	
-	queue_print(queue);
-	
-	//assert(queue_destroy(NULL) == -1);
-	
-	return 0;
-}*/
