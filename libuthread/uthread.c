@@ -14,37 +14,36 @@
 
 struct uthread_tcb {
 	/* TODO Phase 2 */
-	int status;
-	uthread_ctx_t* context;
-	void *stack;
+	int status; // status of thread; NOT IMPLEMENTED YET
+	uthread_ctx_t* context; // context, from context.c/.h
+	void *stack; // stack, allocated from function in context.c/.h
 };
 
 
-queue_t threadQ;
-struct uthread_tcb* runningThread = NULL;
+queue_t threadQ; // queue for ready threads
+struct uthread_tcb* runningThread = NULL; // tracker for currently running thread
 
 void uthread_yield(void)
 {
 	/* TODO Phase 2 */
 	//printf("%d", queue_length(threadQ));
 
-	struct uthread_tcb *curr, *next;
-	queue_enqueue(threadQ, runningThread); // requeue top
-	curr = runningThread;
+	struct uthread_tcb *curr, *next; // holders for current thread and next thread
+	queue_enqueue(threadQ, runningThread); // requeue running thread
+	curr = runningThread; // temp hold running thread
 	
-	queue_dequeue(threadQ, (void**) &next); // dequeue next
+	queue_dequeue(threadQ, (void**) &next); // dequeue next thread
 	//printf("%d %d", top, next); fflush(stdout);
 	
-	runningThread = next;
-	uthread_ctx_switch(curr->context, next->context); // context switch top and next
-
+	runningThread = next; // update running thread
+	uthread_ctx_switch(curr->context, next->context); // context switch current and next thread
 }
 
 int uthread_create(uthread_func_t func, void *arg)
 {
 	/* TODO Phase 2 */
 	struct uthread_tcb* thread = malloc(sizeof(struct uthread_tcb)); // allocate new tcb
-	thread->context = malloc(sizeof(uthread_ctx_t));
+	thread->context = malloc(sizeof(uthread_ctx_t)); // init context space
 	thread->stack = uthread_ctx_alloc_stack(); // call stack allocator, from context.c/.h
 	uthread_ctx_init(thread->context, thread->stack, func, arg); // init context from ^
 
@@ -54,14 +53,16 @@ int uthread_create(uthread_func_t func, void *arg)
 void uthread_exit(void)
 {
 	/* TODO Phase 2 */
-	struct uthread_tcb *curr, *next;
-	curr = runningThread;
+	// called from context bootstrap in context.c/.h
+	// basically same as yield, except without requeuing running thread
+	struct uthread_tcb *curr, *next; // holders for current thread and next thread
+	curr = runningThread; // temp hold running thread
 	
-	queue_dequeue(threadQ, (void**) &next); // dequeue next
+	queue_dequeue(threadQ, (void**) &next); // dequeue next thread
 	//printf("%d %d", top, next); fflush(stdout);
 	
-	runningThread = next;
-	uthread_ctx_switch(curr->context, next->context); // context switch top and next
+	runningThread = next; // update running thread
+	uthread_ctx_switch(curr->context, next->context); // context switch current and next thread
 }
 
 void uthread_block(void)
@@ -77,7 +78,7 @@ void uthread_unblock(struct uthread_tcb *uthread)
 struct uthread_tcb *uthread_current(void)
 {
 	/* TODO Phase 2 */
-	return runningThread;
+	return runningThread; // return running thread
 }
 
 void uthread_start(uthread_func_t start, void *arg)
@@ -86,15 +87,13 @@ void uthread_start(uthread_func_t start, void *arg)
 	threadQ = queue_create(); // queue of tcb
 
 	struct uthread_tcb* idle = malloc(sizeof(struct uthread_tcb)); // create idle thread
-	idle->context = malloc(sizeof(uthread_ctx_t));
-	idle->stack = uthread_ctx_alloc_stack();
-	queue_enqueue(threadQ, idle); // add idle thread
+	idle->context = malloc(sizeof(uthread_ctx_t)); // init context space
+	idle->stack = uthread_ctx_alloc_stack(); // init stack space
+	queue_enqueue(threadQ, idle); // add idle thread to queue
 
-	runningThread = idle;
+	runningThread = idle; // update runningThread
 
-	uthread_create(start, arg); // add first thread
-	
-	//printf("%d\n", queue_length(threadQ)); fflush(stdout);
+	uthread_create(start, arg); // add first thread to queue
 
 	// infinite loop
 	while(1) {
