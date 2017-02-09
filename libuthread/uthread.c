@@ -17,24 +17,29 @@ queue_t threadQ;
 struct uthread_tcb {
 	/* TODO Phase 2 */
 	int status;
-	uthread_ctx_t context;
+	uthread_ctx_t* context;
 	void *stack;
 };
 
 void uthread_yield(void)
 {
 	/* TODO Phase 2 */
-	uthread_tcb* top, next; // holders for tcb at top and next
-	queue_dequeue(threadQ, top); // dequeue top
+	printf("hi");
+	struct uthread_tcb* top;
+	struct uthread_tcb* next; // holders for tcb at top and next
+
+	queue_dequeue(threadQ, (void**) &top); // dequeue top
 	queue_enqueue(threadQ, top); // requeue top
-	queue_dequeue(threadQ, next); // dequeue next
-	uthread_ctx_switch(top-context, next->context); // else context switch top and next
+
+	queue_dequeue(threadQ, (void**) &next); // dequeue next
+	uthread_ctx_switch(top->context, next->context); // context switch top and next
 }
 
 int uthread_create(uthread_func_t func, void *arg)
 {
 	/* TODO Phase 2 */
-	uthread_tcb* thread = malloc(sizeof(uthread_tcb); // allocate new tcb
+	struct uthread_tcb* thread = malloc(sizeof(struct uthread_tcb)); // allocate new tcb
+	thread->context = malloc(sizeof(uthread_ctx_t));
 	thread->stack = uthread_ctx_alloc_stack(); // call stack allocator, from context.c/.h
 	uthread_ctx_init(thread->context, thread->stack, func, arg); // init context from ^
 
@@ -44,6 +49,8 @@ int uthread_create(uthread_func_t func, void *arg)
 void uthread_exit(void)
 {
 	/* TODO Phase 2 */
+	//queue_dequeue(threadQ, NULL);
+	
 }
 
 void uthread_block(void)
@@ -59,15 +66,17 @@ void uthread_unblock(struct uthread_tcb *uthread)
 struct uthread_tcb *uthread_current(void)
 {
 	/* TODO Phase 2 */
+	//return threadQ->head;
 }
 
 void uthread_start(uthread_func_t start, void *arg)
 {
 	/* TODO Phase 2 */
+	printf("hi");
 	threadQ = queue_create(); // queue of tcb
 
-	uthread_tcb* idle = malloc(sizeof(uthread_tcb); // create idle thread
-	thread_enqueue(threadQ, idle); // add idle thread
+	struct uthread_tcb* idle = malloc(sizeof(struct uthread_tcb)); // create idle thread
+	queue_enqueue(threadQ, idle); // add idle thread
 
 	uthread_create(start, arg); // add first thread
 
