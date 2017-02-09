@@ -91,11 +91,11 @@ int queue_dequeue(queue_t queue, void **data)
 	Node* head = queue->head; 
 	Node* del = head;
 	
-	data = &(head->value);
+	*data = head->value;
 	
-	queue->head = head->next;
+	queue->head = head->next; // head-> next = NULL if last element
 	
-	queue->head->prev = NULL;
+	if (head->next) queue->head->prev = NULL;
 	
 	queue->len--;
 	
