@@ -26,8 +26,9 @@ void uthread_yield(void)
 	/* TODO Phase 2 */
 	uthread_tcb* top, next; // holders for tcb at top and next
 	queue_dequeue(threadQ, top); // dequeue top
-	if (queue_dequeue(threadQ, next) == -1) exit(0); // try to dequeue; if empty, exit
-	else uthread_ctx_switch(top-context, next->context); // else context switch
+	queue_enqueue(threadQ, top); // requeue top
+	queue_dequeue(threadQ, next); // dequeue next
+	uthread_ctx_switch(top-context, next->context); // else context switch top and next
 }
 
 int uthread_create(uthread_func_t func, void *arg)
@@ -72,6 +73,8 @@ void uthread_start(uthread_func_t start, void *arg)
 
 	// infinite loop
 	while(1) {
-		uthread_yield(); // yield to next thread
+		if (queue_length(threadQ) > 1) // does not only have idle thread
+			uthread_yield(); // yield to next thread
+		else exit(0); // exit loop
 	}
 }
