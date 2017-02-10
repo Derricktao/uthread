@@ -30,8 +30,10 @@ void thread2(void* arg)
 		t->x++;
 		printf("thread 2, x = %zu\n", t->x);
 		//printf("thread 2\n");
+		printf("	sem1\n");
 		sem_up(t->sem1);									
 		//printf("thread 2\n");		
+		printf("	sem2\n");
 		sem_down(t->sem2);
 	}
 }
@@ -46,8 +48,10 @@ void thread1(void* arg)
 		t->x++;
 		printf("thread 1, x = %zu\n", t->x);
 		//printf("thread 1\n");
+		printf("	sem1\n");
 		sem_down(t->sem1);
 		//printf("thread 1\n");		
+		printf("	sem2\n");
 		sem_up(t->sem2);
 	}
 }
