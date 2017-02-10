@@ -4,19 +4,19 @@ libuthread.a: context.o preempt.o queue.o semaphore.o uthread.o
 	ar cr libuthread.a context.o preempt.o queue.o semaphore.o uthread.o
 
 context.o:
-	gcc -c context.c
+	gcc -Werror -g -c context.c
 
 preempt.o:
-	gcc -c preempt.c
+	gcc -Werror -g -c preempt.c
 
 queue.o:
-	gcc -c queue.c
+	gcc -Werror -g -c queue.c
 
 semaphore.o:
-	gcc -c semaphore.c
+	gcc -Werror -g -c semaphore.c
 
 uthread.o:
-	gcc -c uthread.c
+	gcc -Werror -g -c uthread.c
 
 clean:
 	rm -f libuthread.a *.o
