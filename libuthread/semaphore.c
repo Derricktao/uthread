@@ -14,6 +14,7 @@
 typedef struct semaphore {
 	/* TODO Phase 3 */
 	size_t count;
+	size_t max;
 	queue_t blockQ;
 } *sem_t;
 
@@ -88,7 +89,7 @@ int sem_down(sem_t sem)   // acquire, P(), wait, decre,ent				-- thread 2 not re
 		printf("		enqueue\n");
 		queue_enqueue(sem->blockQ,cur);
 		uthread_block();
-		sem->count--;
+		//sem->count--;
 	}
 	else if((sem->count)>0){					// add to top?
 		sem->count--;
@@ -146,7 +147,7 @@ int sem_up(sem_t sem)   // release, V(), signal, increment
 
 	//printf("		dequeue\n");
 	
-	sem->count++;
+	if (sem->count < sem->max) sem->count++;
 	
 	 //--------------------------------------------------------------------------------------------------------------
 	
