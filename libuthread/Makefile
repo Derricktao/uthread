@@ -1,4 +1,5 @@
-all: libuthread.a	
+all: libuthread.a
+	rm -f *.o
 
 libuthread.a: context.o preempt.o queue.o semaphore.o uthread.o
 	ar cr libuthread.a context.o preempt.o queue.o semaphore.o uthread.o
@@ -19,4 +20,4 @@ uthread.o:
 	gcc -Werror -g -c uthread.c
 
 clean:
-	rm -f libuthread.a *.o
+	rm -f libuthread.a
