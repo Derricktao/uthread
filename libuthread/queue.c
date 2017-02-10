@@ -17,9 +17,9 @@ struct queue {
 	int len;
 };
 
-queue_t queue_create(void)
+queue_t queue_create(void)						// initialize queue
 {
-	/* TODO Phase 1 */
+
 	queue_t qt = malloc(sizeof(queue_t));
 	
 	qt->head = NULL;
@@ -28,9 +28,9 @@ queue_t queue_create(void)
 	return qt;
 }
 
-int queue_destroy(queue_t queue)
+int queue_destroy(queue_t queue)		// destroy queue
 {
-	/* TODO Phase 1 */
+
 	if(!queue){
 		return -1;
 	}
@@ -39,9 +39,9 @@ int queue_destroy(queue_t queue)
 	return 0;
 }
 
-int queue_enqueue(queue_t queue, void *data)
+int queue_enqueue(queue_t queue, void *data)			// adds element in FIFO order 
 {
-	/* TODO Phase 1 */
+
 	if(!queue){
 		return -1;
 	}
@@ -50,7 +50,7 @@ int queue_enqueue(queue_t queue, void *data)
 		Node* head = queue->head; 
 		Node* temp = head; 
 		
-	 	if(!cur){
+	 	if(!cur){									// if queue is empty
 
 			cur = malloc(sizeof(Node));
 			
@@ -59,7 +59,7 @@ int queue_enqueue(queue_t queue, void *data)
 			queue->tail=cur;
 			queue->head=cur;
 		}		
-		else{
+		else{									// if queue is not empty
 			cur = queue->tail;
 			
 			Node* new = malloc(sizeof(Node));
@@ -81,9 +81,9 @@ int queue_enqueue(queue_t queue, void *data)
 	return 0;
 }
 
-int queue_dequeue(queue_t queue, void **data)
+int queue_dequeue(queue_t queue, void **data)			// removes element in FIFO order 
 {
-	/* TODO Phase 1 */
+
 	if(!queue || queue->len==0 ){
 		return -1;
 	}
@@ -91,9 +91,9 @@ int queue_dequeue(queue_t queue, void **data)
 	Node* head = queue->head; 
 	Node* del = head;
 	
-	*data = head->value;
+	*data = head->value;		// get data from head node
 	
-	queue->head = head->next; // head-> next = NULL if last element
+	queue->head = head->next; // set head to 2nd element in queue
 	
 	if (head->next) queue->head->prev = NULL;
 	
@@ -105,7 +105,7 @@ int queue_dequeue(queue_t queue, void **data)
 
 int queue_delete(queue_t queue, void *data)
 {
-	/* TODO Phase 1 */
+
 	if(!queue ){
 		return -1;
 	}
@@ -114,19 +114,16 @@ int queue_delete(queue_t queue, void *data)
 	Node* head = queue->head; 
 	Node* del ; 
 	
-	int flag=0;
+	int flag=0;	// 0 - data not found , 1 - data found
 		
 
-				//check if at end/beg of list
 			
 
 	 while(cur != NULL){				 
-		 if(cur->value == data){			// find where value == data 
-			//printf("\n");
-			//printf("we have a match\n");
-			//printf("%d\n", *(int*)(cur->value));
+		 if(cur->value == data){			// check if data is in list
+													// break and set flag if true
 			flag=1;
-			 break;
+			 break;				
 		 }				
 		cur = cur->next;
 	 }		
@@ -175,7 +172,6 @@ int queue_iterate(queue_t queue, queue_func_t func)
 	Node* temp ; 
 	
 	
-	
 	//assert(queue_lenght(myqueue) == 1);
 	
 	//assert after each function call? , if delete then preseve the value of cur
@@ -190,9 +186,9 @@ int queue_iterate(queue_t queue, queue_func_t func)
 	return 0;
 }
 
-int queue_length(queue_t queue)
+int queue_length(queue_t queue)			// returns the length of the queue 
 {
-	/* TODO Phase 1 */
+
 	if(!queue){
 		return -1;
 	}
