@@ -27,8 +27,11 @@ void thread2(void* arg)
 	struct test3 *t = (struct test3*)arg;
 
 	while (t->x < t->maxcount) {
-		printf("thread 2, x = %zu\n", t->x++);
-		sem_up(t->sem1);
+		t->x++;
+		printf("thread 2, x = %zu\n", t->x);
+		//printf("thread 2\n");
+		sem_up(t->sem1);									
+		//printf("thread 2\n");		
 		sem_down(t->sem2);
 	}
 }
@@ -40,8 +43,11 @@ void thread1(void* arg)
 	uthread_create(thread2, arg);
 
 	while (t->x < t->maxcount) {
-		printf("thread 1, x = %zu\n", t->x++);
+		t->x++;
+		printf("thread 1, x = %zu\n", t->x);
+		//printf("thread 1\n");
 		sem_down(t->sem1);
+		//printf("thread 1\n");		
 		sem_up(t->sem2);
 	}
 }

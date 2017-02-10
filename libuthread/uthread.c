@@ -35,7 +35,7 @@ void uthread_yield(void)
 	curr = runningThread; // temp hold running thread
 	
 	queue_dequeue(threadQ, (void**) &next); // dequeue next thread
-	while(next->status == -1) // while next is blocked
+	while((next->status == -1)) // while next is blocked or already running 
 	{
 		queue_enqueue(threadQ, next); // requeue blocked thread
 		queue_dequeue(threadQ, (void**) &next); // dequeue next thread
@@ -59,42 +59,66 @@ int uthread_create(uthread_func_t func, void *arg)
 	queue_enqueue(threadQ, thread); // add tcb to queue
 }
 
-void uthread_exit(void)
+void uthread_exit(void)							// exit function from context, do not requeue thread 
 {
 	/* TODO Phase 2 */
-	// called from context bootstrap in context.c/.h
-	// basically same as yield, except without requeuing running thread
+\
 	struct uthread_tcb *curr, *next; // holders for current thread and next thread
 	curr = runningThread; // temp hold running thread
 	
 	queue_dequeue(threadQ, (void**) &next); // dequeue next thread
-	while(next->status == -1) // while next thread is blocked
+	while((next->status == -1)) // while next thread is blocked or already running
 	{
 		queue_enqueue(threadQ, next); // requeue blocked thread
 		queue_dequeue(threadQ, (void**) &next); // dequeue next thread
+
 	}
 	//printf("%d %d", top, next); fflush(stdout);
 	
 	runningThread = next; // update running thread
+	
+	
 	uthread_ctx_switch(curr->context, next->context); // context switch current and next thread
 }
 
-void uthread_block(void)
+void uthread_block(void)					// remove running from threadQ
 {
+	struct uthread_tcb *next, *curr;
+	
 	/* TODO Phase 2 */
-	runningThread->status = -1; // set status to blocked
-	queue_enqueue(threadQ, runningThread); // requeue blocked thread
-	queue_enqueue(blockedQ, runningThread); // add thread to blocked queue
-
-	uthread_exit(); // start next thread
+	curr = runningThread;
+	
+	curr->status = -1; // set status to blocked
+	
+	queue_enqueue(threadQ, curr); // requeue current thread 
+	
+	
+	queue_dequeue(threadQ, (void**) &next); // dequeue next thread
+	while((next->status == -1)) // while next is blocked or already running 
+	{
+		queue_enqueue(threadQ, next); // requeue blocked thread
+		queue_dequeue(threadQ, (void**) &next); // dequeue next thread
+	}
+	
+	runningThread = next; // update running thread
+	
+	
+	uthread_ctx_switch(curr->context, next->context); // context switch current and next thread
+	
 }
 
-void uthread_unblock(struct uthread_tcb *uthread)
+void uthread_unblock(struct uthread_tcb *uthread)				// unblock specific uthread				, add uthread to threadQ
 {
 	/* TODO Phase 2 */
-	struct uthread_tcb *thread; // temp holder
-	queue_dequeue(blockedQ, (void**) &thread); // dequeue from blocked queue
-	thread->status = 0; // set status to ready
+ 	runningThread->status = 0; //set status to ready 
+	
+	queue_enqueue(threadQ, runningThread); // requeue current thread 
+	
+	uthread->status = 1; // set status of new thread running
+	
+	runningThread=uthread;
+	uthread_ctx_switch(runningThread->context, uthread->context);  
+	
 }
 
 struct uthread_tcb *uthread_current(void)
