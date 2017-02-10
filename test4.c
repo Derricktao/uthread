@@ -30,10 +30,10 @@ void consumer(void* arg)
 	struct test4 *t = (struct test4*)arg;
 	size_t out = 0;
 
-	while (out < t->maxcount) {
+	while (out < t->maxcount - 1) {
 		size_t i, n = random() % BUFFER_SIZE + 1;
 
-		n = clamp(n, t->maxcount - out);
+		n = clamp(n, t->maxcount - out - 1);
 		printf("Consumer wants to get %zu items out of buffer...\n", n);
 		for (i = 0; i < n; i++) {
 			sem_down(t->empty);
@@ -49,7 +49,7 @@ void consumer(void* arg)
 void producer(void* arg)
 {
 	struct test4 *t = (struct test4*)arg;
-	size_t count;
+	size_t count = 0;
 
 	uthread_create(consumer, arg);
 
