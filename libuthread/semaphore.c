@@ -86,14 +86,14 @@ int sem_down(sem_t sem)   // acquire, P(), wait, decre,ent				-- thread 2 not re
 		} */
 		
      if((sem->count)==0){
-		printf("		enqueue\n");
+		printf("		block, count = %d\n", sem->count);
 		queue_enqueue(sem->blockQ,cur);
 		uthread_block();
-		//sem->count--;
+		//sem->count--; // you accidentally put this in here
 	}
 	else if((sem->count)>0){					// add to top?
 		sem->count--;
-		printf("		count\n");
+		printf("		run, count = %d\n", sem->count);
 	}
 	else if((sem->count)<0){
 		printf("error");
@@ -147,17 +147,19 @@ int sem_up(sem_t sem)   // release, V(), signal, increment
 
 	//printf("		dequeue\n");
 	
-	if (sem->count < sem->max) sem->count++;
+	
 	
 	 //--------------------------------------------------------------------------------------------------------------
 	
-   	if(queue_length(sem->blockQ)>0){
-		printf("		dequeue\n");
+   	if(sem->count == 0 && queue_length(sem->blockQ)>0){
+		printf("		unblock\n");
 		queue_dequeue(sem->blockQ,(void**) &temp);
 		uthread_unblock(temp);	
 		//sem->count++; 
-	}  
-   
+	}
+	else sem->count++;
+	//else if (sem->count < sem->max) sem->count++;
+   	
 		
 		 //--------------------------------------------------------------------------------------------------------------
 	
