@@ -22,7 +22,6 @@ struct uthread_tcb {
 
 
 queue_t threadQ; // queue for ready threads
-queue_t blockedQ; // queue for blocked threads
 struct uthread_tcb* runningThread = NULL; // tracker for currently running thread
 
 void uthread_yield(void)
@@ -75,8 +74,6 @@ void uthread_block(void)
 	/* TODO Phase 2 */
 	
 	runningThread->status = -1; // set status to blocked
-	queue_enqueue(blockedQ, runningThread); // add thread to blocked queue
-
 	uthread_yield(); // start next thread
 }
 
@@ -84,9 +81,7 @@ void uthread_unblock(struct uthread_tcb *uthread)
 {
 	/* TODO Phase 2 */
 
-	struct uthread_tcb *thread; // temp holder
-	queue_dequeue(blockedQ, (void**) &thread); // dequeue from blocked queue
-	thread->status = 0; // set status to ready
+	uthread->status = 0; // set status to ready
 }
 
 struct uthread_tcb *uthread_current(void)
