@@ -3,6 +3,9 @@
 
 #include <queue.h>
 
+// compile with:
+// $ gcc -Werror -g -o test-queue -Ilibuthread test-queue.c -Llibuthread -luthread
+
 int main(int argc, char* argv[])
 {
 	queue_t queue = queue_create();
