@@ -27,8 +27,9 @@ struct uthread_tcb* runningThread = NULL; // tracker for currently running threa
 void uthread_yield(void)
 {
 	/* TODO Phase 2 */
+
 	sigset_t mask;
-	preempt_save(&mask);
+	preempt_save(&mask); // save and disable preemption
 
 	struct uthread_tcb *curr, *next; // holders for current thread and next thread
 	queue_enqueue(threadQ, runningThread); // requeue running thread
@@ -49,14 +50,15 @@ void uthread_yield(void)
 	runningThread = next; // update running thread
 	uthread_ctx_switch(curr->context, next->context); // context switch current and next thread
 
-	preempt_restore(&mask);
+	preempt_restore(&mask); // restore mask
 }
 
 int uthread_create(uthread_func_t func, void *arg)
 {
 	/* TODO Phase 2 */
+
 	sigset_t mask;
-	preempt_save(&mask);
+	preempt_save(&mask); // save and disable preemption
 
 	struct uthread_tcb* thread = malloc(sizeof(struct uthread_tcb)); // allocate new tcb
 	thread->status = 0; // set status to ready
@@ -66,7 +68,7 @@ int uthread_create(uthread_func_t func, void *arg)
 
 	queue_enqueue(threadQ, thread); // add tcb to queue
 
-	preempt_restore(&mask);
+	preempt_restore(&mask); // restore mask
 }
 
 void uthread_exit(void) // called from context bootstrap in context.c/.h
@@ -89,7 +91,7 @@ void uthread_unblock(struct uthread_tcb *uthread)
 {
 	/* TODO Phase 2 */
 
-	uthread->status = 0; // set status to ready
+	uthread->status = 0; // set status of thread to ready
 }
 
 struct uthread_tcb *uthread_current(void)
@@ -115,7 +117,7 @@ void uthread_start(uthread_func_t start, void *arg)
 
 	uthread_create(start, arg); // add first thread to queue
 
-	preempt_enable();
+	preempt_enable(); // enable and start preemption
 	preempt_start();
 	
 	// infinite loop
@@ -123,6 +125,6 @@ void uthread_start(uthread_func_t start, void *arg)
 	{
 		if (queue_length(threadQ) > 1) // does not only have idle thread
 			uthread_yield(); // yield to next thread
-		else exit(0); // exit loop
+		else exit(0); // exit loop and program
 	}
 }
