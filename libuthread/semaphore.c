@@ -51,22 +51,20 @@ int sem_destroy(sem_t sem)
 
 int sem_down(sem_t sem)   // acquire, P(), wait, decre,ent				-- thread 2 not returning to func
 {
-
-	
 	/* TODO Phase 3 */
+	if (!sem) return -1;
+
 	struct uthread_tcb* cur = uthread_current(); 
 	
-
-		
-     if((sem->count)==0){
-		printf("		block, count = %d\n", sem->count);
+	if((sem->count)==0){
+		//printf("		block, count = %d\n", sem->count);
 		queue_enqueue(sem->blockQ,cur);
 		uthread_block();
 		//sem->count--; // you accidentally put this in here
 	}
 	else if((sem->count)>0){					// add to top?
 		sem->count--;
-		printf("		run, count = %d\n", sem->count);
+		//printf("		run, count = %d\n", sem->count);
 	}
 	else if((sem->count)<0){
 		printf("error");
@@ -80,22 +78,22 @@ int sem_down(sem_t sem)   // acquire, P(), wait, decre,ent				-- thread 2 not re
 
 int sem_up(sem_t sem)   // release, V(), signal, increment 
 {
-	//printf("		un-block\n");
-	
 	/* TODO Phase 3 */
+	if (!sem) return -1;
+
 	struct uthread_tcb* cur = uthread_current(); 
 	struct uthread_tcb* temp;
 
 	
    	if(sem->count == 0 && queue_length(sem->blockQ)>0){
-		printf("		unblock\n");
+		//printf("		unblock\n");
 		queue_dequeue(sem->blockQ,(void**) &temp);
 		uthread_unblock(temp);	
 		//sem->count++; 
 	}
 	else {
 		sem->count++;
-		printf("		up, count = %d\n", sem->count);
+		//printf("		up, count = %d\n", sem->count);
 	}
 
 	return 0;
