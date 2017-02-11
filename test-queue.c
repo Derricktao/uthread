@@ -55,7 +55,6 @@ int main(int argc, char* argv[])
 	queue_iterate(queue,pq);
 	printf("queue length now is %d\n",queue_length(queue));	
 
-
 //Pass assert
 	assert(queue_destroy(NULL) == -1);
 	assert(queue_enqueue(NULL, NULL) == -1);
@@ -64,6 +63,5 @@ int main(int argc, char* argv[])
 	assert(queue_delete(NULL,NULL)==-1);
 	assert(queue_length(NULL) == -1);
 	printf("\npass all assert\n");
-
 	return 0;
 }
