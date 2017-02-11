@@ -90,7 +90,6 @@ int queue_dequeue(queue_t queue, void **data)			// removes element in FIFO order
 	
 	Node* head = queue->head; 
 	Node* del = head;
-	
 	*data = head->value;		// get data from head node
 	
 	queue->head = head->next; // set head to 2nd element in queue
@@ -99,7 +98,7 @@ int queue_dequeue(queue_t queue, void **data)			// removes element in FIFO order
 	
 	queue->len--;
 	
-	//free(del); <-- caused problems...
+	//free(del);// <-- caused problems...
 	return 0;
 }
 
@@ -133,8 +132,13 @@ int queue_delete(queue_t queue, void *data)
 		 return -1;
 	 }
 	 
-	 
-	if(cur == queue->head){		// value == data, at head
+	if (cur == queue->head && cur == queue->tail) {
+		del = queue->head;
+		queue->head = NULL;
+		queue->tail = NULL;
+	}
+
+	else if(cur == queue->head){		// value == data, at head
 	
 		del = queue->head;
 	
@@ -157,6 +161,7 @@ int queue_delete(queue_t queue, void *data)
 	}
 	 
 	free(del);
+	queue->len --;
 	return 0;
 }
 
