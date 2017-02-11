@@ -99,7 +99,7 @@ int queue_dequeue(queue_t queue, void **data)			// removes element in FIFO order
 	
 	queue->len--;
 	
-	free(del);
+	//free(del);
 	return 0;
 }
 
