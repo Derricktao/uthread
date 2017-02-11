@@ -28,9 +28,14 @@ sem_t sem_create(size_t count)
 		return NULL;
 	}
 
+	sigset_t mask;
+	preempt_save(&mask);
+
 	sem_t sem = malloc(sizeof(sem_t));
 	sem->count = count;
 	sem->blockQ = queue_create();
+
+	preempt_restore(&mask);
 	
 	return sem;
 }
@@ -42,8 +47,14 @@ int sem_destroy(sem_t sem)
 		return -1;
 	}
 	
+
+	sigset_t mask;
+	preempt_save(&mask);
+
 	
 	free(sem);
+
+	preempt_restore(&mask);
 	
 	return 0;
 }

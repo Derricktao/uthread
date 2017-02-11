@@ -16,29 +16,51 @@
  */
 #define HZ 100
 
+
+
 void preempt_save(sigset_t *level)
 {
 	/* TODO Phase 4 */
+
+	sigprocmask(0, NULL, level); // save mask to level
+	preempt_disable(); // disable preemption
 }
 
 void preempt_restore(sigset_t *level)
 {
 	/* TODO Phase 4 */
+	sigprocmask(SIG_SETMASK, level, NULL); // set mask to level
 }
 
 void preempt_enable(void)
 {
 	/* TODO Phase 4 */
+	sigset_t mask; // signal mask
+	sigemptyset(&mask); // set mask to empty
+	sigaddset(&mask, SIGVTALRM); // add SIGVTALRM to mask
+	sigprocmask(SIG_UNBLOCK, &mask, NULL); // unblock SIGVTALRM
+	printf("PREEMPT ENABLE %d\n", preempt_disabled());
 }
 
 void preempt_disable(void)
 {
 	/* TODO Phase 4 */
+	sigset_t mask; // signal mask
+	sigemptyset(&mask); // set mask to empty
+	sigaddset(&mask, SIGVTALRM); // add SIGVTALRM to mask
+	sigprocmask(SIG_BLOCK, &mask, NULL); // block SIGVTALRM
+	printf("PREEMPT DISABLE %d\n", preempt_disabled());
 }
 
 bool preempt_disabled(void)
 {
 	/* TODO Phase 4 */
+	
+	sigset_t mask; // signal mask
+	sigprocmask(0, NULL, &mask); // copy current mask
+
+	if (sigismember(&mask, SIGVTALRM)) return true; // check if SIGVTALRM is in mask, true is disabled
+	else return false;
 }
 
 /*
@@ -48,6 +70,9 @@ bool preempt_disabled(void)
 static void timer_handler(int signo)
 {
 	/* TODO Phase 4 */
+
+	if (!preempt_disabled()) // if preemption not disabled, yield at timer
+		uthread_yield();
 }
 
 void preempt_start(void)

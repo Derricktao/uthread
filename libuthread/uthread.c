@@ -27,6 +27,8 @@ struct uthread_tcb* runningThread = NULL; // tracker for currently running threa
 void uthread_yield(void)
 {
 	/* TODO Phase 2 */
+	sigset_t mask;
+	preempt_save(&mask);
 
 	struct uthread_tcb *curr, *next; // holders for current thread and next thread
 	queue_enqueue(threadQ, runningThread); // requeue running thread
@@ -46,11 +48,15 @@ void uthread_yield(void)
 	
 	runningThread = next; // update running thread
 	uthread_ctx_switch(curr->context, next->context); // context switch current and next thread
+
+	preempt_restore(&mask);
 }
 
 int uthread_create(uthread_func_t func, void *arg)
 {
 	/* TODO Phase 2 */
+	sigset_t mask;
+	preempt_save(&mask);
 
 	struct uthread_tcb* thread = malloc(sizeof(struct uthread_tcb)); // allocate new tcb
 	thread->status = 0; // set status to ready
@@ -59,6 +65,8 @@ int uthread_create(uthread_func_t func, void *arg)
 	uthread_ctx_init(thread->context, thread->stack, func, arg); // init context from ^
 
 	queue_enqueue(threadQ, thread); // add tcb to queue
+
+	preempt_restore(&mask);
 }
 
 void uthread_exit(void) // called from context bootstrap in context.c/.h
@@ -107,6 +115,9 @@ void uthread_start(uthread_func_t start, void *arg)
 
 	uthread_create(start, arg); // add first thread to queue
 
+	preempt_enable();
+	preempt_start();
+	
 	// infinite loop
 	while(1)
 	{

@@ -39,6 +39,7 @@ void uthread_ctx_destroy_stack(void *top_of_stack)
 static void uthread_ctx_bootstrap(uthread_func_t func, void *arg)
 {
 	/* TODO Phase 4 */
+	preempt_enable();	
 
 	/* Execute thread and when done, exit */
 	func(arg);
