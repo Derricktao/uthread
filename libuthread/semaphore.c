@@ -44,7 +44,6 @@ int sem_destroy(sem_t sem)
 	preempt_save(&mask); // save and disable preemption
 
 	free(sem); // free
-	sem = NULL; // remove address
 
 	preempt_restore(&mask); // restore signal mask
 	

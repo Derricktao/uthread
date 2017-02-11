@@ -31,7 +31,6 @@ int queue_destroy(queue_t queue)
 	if (!queue) return -1; // if NULL pointer, return -1
 	
 	free(queue); // free queue
-	queue = NULL; // remove pointer
 
 	return 0;
 }
