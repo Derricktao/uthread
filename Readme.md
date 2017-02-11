@@ -9,5 +9,7 @@ The uThread API uses uthread.c, which contains the uthread_tcb data structure an
 Semaphore.c contains the semaphore struct sem_t, and functions related to it. The semaphorecontains the current count of the semaphore and a queue that holds the list ofblocked threads waiting for a resource. This queue is located inside of thedynamically allocated semaphore struct so that the informations of thesemaphore is preserved between context switches. The functions sem_down() andsem_up() are used to interact with the semaphore. These functions change thecount value of the semaphore and block/unblock threads in response to thisvalue. 
 
 ## Preemption
-## Bugs
+For preemption, we make signal masks and add the SIGVTALRM signal. Then, use the sigprocmask() function to block or unblock the signal.
 
+## Bugs
+No bugs that we are aware of.
